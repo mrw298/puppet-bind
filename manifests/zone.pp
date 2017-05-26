@@ -102,14 +102,25 @@ define bind::zone (
         }
 
         if member(['init', 'managed'], $zone_file_mode) {
-            file { "${cachedir}/${name}/${zone_file}":
-                ensure  => present,
-                owner   => $bind_user,
-                group   => $bind_group,
-                mode    => '0644',
-                replace => ($zone_file_mode == 'managed'),
-                source  => pick($source, 'puppet:///modules/bind/db.empty'),
-                audit   => [ content ],
+          if $content == '' {
+              file { "${cachedir}/${name}/${zone_file}":
+                  ensure  => present,
+                  owner   => $bind_user,
+                  group   => $bind_group,
+                  mode    => '0644',
+                  replace => ($zone_file_mode == 'managed'),
+                  source  => pick($source, 'puppet:///modules/bind/db.empty'),
+                  audit   => [ content ],
+              }
+            } else {
+              file { "${cachedir}/${name}/${zone_file}":
+                  ensure  => present,
+                  owner   => $bind_user,
+                  group   => $bind_group,
+                  mode    => '0644',
+                  content => $content,
+                  audit   => [ content ],
+              }
             }
         }
 

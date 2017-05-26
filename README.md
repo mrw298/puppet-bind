@@ -131,6 +131,18 @@ bind::zone { 'example.org':
 }
 ```
 
+A master zone using a templated zone file:
+
+```
+bind::zone { 'example.org':
+    zone_type       => 'master',
+    dynamic         => false,
+    content         =>  epp( "db.example.org.template",
+                             { 'template_var' => lookup( 'variable') }),
+    allow_transfers => [ 'secondary-dns', ],
+}
+```
+
 A master zone with DNSSec disabled which allows updates using a TSIG key and zone transfers to servers matching an acl:
 
 ```
